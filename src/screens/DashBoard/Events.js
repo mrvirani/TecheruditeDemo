@@ -1,68 +1,52 @@
-import {FlatList, SafeAreaView, StyleSheet, Text, View} from 'react-native';
+import {
+  ActivityIndicator,
+  SafeAreaView,
+  StatusBar,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
 import React from 'react';
-import EventCard from '../../components/molecules/EventCard';
 import Header from '../../components/atoms/Header';
 import {useEventDataQuery} from '../../api/eventDataApi';
 import {useAppDispatch} from '../../redux/store';
 import {toggleFavorite} from '../../redux/slice/favoritesSlice';
 import {useSelector} from 'react-redux';
+import EventListData from '../../components/molecules/EventListData';
 
 const Events = () => {
-  const favoriteEvents = useSelector(state => state.favorites.favoriteEvents);
-  const loginData = useSelector(state=> state.auth.data.user)
+  const favoriteEvents = useSelector(state => state?.favorites?.favoriteEvents);
+  const loginData = useSelector(state => state?.auth?.data?.user);
   const dispatch = useAppDispatch();
 
-  console.log("auth", loginData);
-  
-  const {data: events, error, isLoading} = useEventDataQuery({});
+  console.log('auth', loginData);
 
-  if (isLoading) {
-    return <Text>Loading...</Text>;
-  }
-
-  if (error) {
-    return <Text>Error: {error.message}</Text>;
-  }
+  const {data: events, isLoading} = useEventDataQuery({});
 
   const handleFavoriteToggle = event => {
-    dispatch(toggleFavorite(event)); 
+    dispatch(toggleFavorite(event));
   };
-
-   const emptyScreen = () => {
-            return (
-              <View style={styles.emptyScreen}>
-                <Text style={styles.emptyText}>No data found</Text>
-              </View>
-            );
-          };
 
   return (
     <SafeAreaView style={styles.container}>
-      <Header name={loginData?.usr_username} subtitle="Are you ready to dance?" />
-      <View style={styles.listData}>
-        <FlatList
-          data={events?.data?.events}
-          keyExtractor={(item, index) => `${item.event_name}-${index}`}
-          renderItem={({item}) => {
-            console.log('ITEM DATA:', item);
-
-            const isFavorite = favoriteEvents?.some(
-              favEvent => favEvent.event_name === item.event_name,
-            );
-
-            return (
-              <EventCard
-                event={item}
-                onToggleFavorite={handleFavoriteToggle}
-                isFavorite={isFavorite}
-              />
-            );
-          }}
-          contentContainerStyle={{flex:1,paddingBottom: 120}}
-          showsVerticalScrollIndicator={false}
-          ListEmptyComponent={emptyScreen}
-        />
-      </View>
+      <StatusBar barStyle="dark-content" backgroundColor="white" />
+      <Header
+        name={loginData?.usr_username}
+        subtitle="Are you ready to dance?"
+      />
+      {isLoading ? (
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color="black" />
+        </View>
+      ) : (
+        <View style={styles.listData}>
+          <EventListData
+            data={events?.data?.events}
+            favoriteEvents={favoriteEvents}
+            handleFavoriteToggle={handleFavoriteToggle}
+          />
+        </View>
+      )}
     </SafeAreaView>
   );
 };
@@ -75,15 +59,13 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(242, 242, 242, 1)',
   },
   listData: {
+    flex: 1,
     backgroundColor: '#f5f5f5',
     paddingHorizontal: 10,
   },
-  emptyScreen: {
+  loadingContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
   },
-  emptyText:{
-    color:"gray"
-  }
 });

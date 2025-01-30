@@ -1,14 +1,14 @@
-import {Image, StyleSheet, Text, View} from 'react-native';
+import {Image, StatusBar, StyleSheet, Text, View} from 'react-native';
 import React, {useState} from 'react';
 import InputText from '../../components/atoms/InputText';
-import {useNavigation} from '@react-navigation/native';
 import {validateEmail, validatePassword} from '../../utiles/utiles';
 import matrics from '../../constants/matrics';
 import CustomButton from '../../components/atoms/CustomButton';
 import DividerWithText from '../../components/atoms/DividerWithText';
-import SocialButton from '../../components/atoms/SocialButton';
 import {useLoginMutation} from '../../api/authApi';
 import Navigation from '../../helper/Navigation';
+import {showSuccessToast} from '../../configs/toastUtils';
+import SocialButtons from '../../components/atoms/SocialButtons';
 
 const Login = () => {
   const [email, setEmail] = useState('testpracticaluser001@mailinator.com');
@@ -21,9 +21,10 @@ const Login = () => {
       if (response?.data?.token) {
         console.log('response?.data?.token', response?.data);
         Navigation.reset(0, [{name: 'BottomTab'}]);
+        showSuccessToast('Successfully Login!!');
       }
     } catch (err) {
-      console.error('Login failed:', err);
+      showSuccessToast('Login failed!!');
     }
   };
   const handleForgot = () => {
@@ -31,21 +32,22 @@ const Login = () => {
   };
 
   const handleGoogleSignIn = () => {
-    console.log('Google Sign In');
+    showSuccessToast('Google Sign In added soon...');
   };
 
   const handleAppleSignIn = () => {
-    console.log('Apple Sign In');
+    showSuccessToast('Apple Sign In added soon...');
   };
 
   const handleFacebookSignIn = () => {
-    console.log('Facebook Sign In');
+    showSuccessToast('Facebook Sign In added soon...');
   };
 
   const onPressGuest = () => {};
 
   return (
     <View style={styles.container}>
+      <StatusBar barStyle="light-content" backgroundColor="rgba(0,0,0,0.3)" />
       <View style={styles.upperContainer}>
         <Text style={styles.titleApp}>Plie</Text>
         <Image
@@ -89,20 +91,11 @@ const Login = () => {
 
         <DividerWithText style={styles.divider} />
 
-        <View style={styles.socialContainer}>
-          <SocialButton
-            iconSource={require('../../assets/Images/google.png')}
-            onPress={handleGoogleSignIn}
-          />
-          <SocialButton
-            iconSource={require('../../assets/Images/apple.png')}
-            onPress={handleAppleSignIn}
-          />
-          <SocialButton
-            iconSource={require('../../assets/Images/facebook.png')}
-            onPress={handleFacebookSignIn}
-          />
-        </View>
+        <SocialButtons
+          onGoogleSignIn={handleGoogleSignIn}
+          onAppleSignIn={handleAppleSignIn}
+          onFacebookSignIn={handleFacebookSignIn}
+        />
         <Text
           style={styles.guestText}
           hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}
@@ -163,11 +156,6 @@ const styles = StyleSheet.create({
 
   divider: {
     marginTop: matrics.vs(40),
-  },
-  socialContainer: {
-    marginTop: matrics.vs(32),
-    flexDirection: 'row',
-    justifyContent: 'center',
   },
   guestText: {
     color: '#828282',

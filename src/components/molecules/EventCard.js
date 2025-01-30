@@ -96,7 +96,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
     borderRadius: 10,
     marginVertical: matrics.vs(8),
-    elevation: 2,
+    elevation: 8,
     gap: 8,
   },
 

@@ -91,7 +91,7 @@ const Navigation = () => {
     <NavigationContainer ref={navigationRef}>
       <AppStack.Navigator
         screenOptions={{headerShown: false}}
-        initialRouteName={false ? 'BottomTab' : 'AuthStack'}>
+        initialRouteName={isAuthenticated ? 'BottomTab' : 'AuthStack'}>
         <AppStack.Screen name="AuthStack" component={AuthStackScreen} />
         <AppStack.Screen name="BottomTab" component={BottomTabScreen} />
       </AppStack.Navigator>
